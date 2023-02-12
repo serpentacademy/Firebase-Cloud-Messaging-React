@@ -15,7 +15,7 @@ function App() {
 const messaging = getMessaging(app);
 const activateMessages = async() => {
   const token = await getToken(messaging, {
-    vapidKey: "YouR_VAPID_KEY"
+    vapidKey: "YOUR_VAPID_KEY"
   }).catch(error => console.log("error generatin token"))
 
   if (token) console.log("token", token);
@@ -40,7 +40,6 @@ React.useEffect(()=>{
 
 
 
-window.setInterval(checkCookie, 100); // run every 100 ms
   return (
     <div>
     <h1>Firebase Cloud Messages</h1>
