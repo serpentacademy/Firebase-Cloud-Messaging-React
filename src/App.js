@@ -1,23 +1,52 @@
-import logo from './logo.svg';
 import './App.css';
-
+import { getAnalytics } from "firebase/analytics";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import {getAuth, signInAnonymously} from "firebase/auth"
+import {ToastContainer, toast} from 'react-toastify'
+import app from './firebase'; 
+import "react-toastify/dist/ReactToastify.css"
+import React from 'react';
+const analytics = getAnalytics(app);
 function App() {
+  const singUpAnonymously= ()=>{
+    signInAnonymously(getAuth(app)).then(user=> console.log(user));
+  }
+ 
+const messaging = getMessaging(app);
+const activateMessages = async() => {
+  const token = await getToken(messaging, {
+    vapidKey: "YouR_VAPID_KEY"
+  }).catch(error => console.log("error generatin token"))
+
+  if (token) console.log("token", token);
+  if (!token) console.log("no token")
+
+}
+
+React.useEffect(()=>{
+  singUpAnonymously();
+  activateMessages();
+  onMessage(messaging, message=>{
+    console.log("your message: ", message)
+   
+    toast(message.notification.title)
+   // console.log("payload.data.url"+message.data.url)
+//window.location.replace("http://localhost:3000/"+message.data.url)
+  })
+
+
+})
+
+
+
+
+window.setInterval(checkCookie, 100); // run every 100 ms
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+    <h1>Firebase Cloud Messages</h1>
+    <ToastContainer/>
+    <button onClick={singUpAnonymously}>Log In</button>
+    <button onClick={activateMessages}>Generate Token</button>
     </div>
   );
 }
